@@ -76,4 +76,8 @@ public class AccessMenuService {
     return accessMenuRepository.existsAccessMenu(role_id, menu_id);
   }
 
+  public String existsAccessMenuCount(int role_id, int menu_id) {
+    return accessMenuRepository.existsAccessMenuCount(role_id, menu_id);
+  }
+
 }

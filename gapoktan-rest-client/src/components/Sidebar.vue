@@ -56,26 +56,47 @@ export default {
   },
 
   async created(){
-    this.user = await this.getUser(localStorage.getItem('email'));
-    this.role = await this.getRole(this.user.role);
-    this.menu = await this.getMenu(this.role.id);
+    await this.getUser(localStorage.getItem('email'));
+    await this.getRole(this.user.role);
+    await this.getMenu(this.role.id);
     await this.setSidebarMenu(this.menu); /** set sidebar menu from database */
   },
 
   methods: {
     async getUser(email){
-      const response = await axios.get(`${baseURL}/anggota/getbyemail/${email}`, header);
-      return response.data.payload;
+      await axios.get(`${baseURL}/anggota/getbyemail/${email}`, header)
+      .then(res => {
+        if(res.data.status){
+          this.user = res.data.payload;
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data.message);
+      })
     },
 
     async getRole(role){
-      const response = await axios.get(`${baseURL}/role/getbyname/${role}`, header);
-      return response.data.payload;
+      await axios.get(`${baseURL}/role/getbyname/${role}`, header)
+      .then(res => {
+        if(res.data.status){
+          this.role = res.data.payload;
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data.message);
+      })
     },
 
     async getMenu(roleId){
-      const response = await axios.get(`${baseURL}/menu/getaccessmenubyroleid/${roleId}`, header);
-      return response.data.payload;
+      await axios.get(`${baseURL}/menu/getaccessmenubyroleid/${roleId}`, header)
+      .then(res => {
+        if(res.data.status){
+          this.menu = res.data.payload;
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data.message);
+      });
     },
 
     async getSubMenu(menuId){
@@ -88,12 +109,12 @@ export default {
 
         this.subMenu[i] = await this.getSubMenu(menu[i].id);
 
-        this.sidebarMenuHtml += `<hr class="sidebar-divider" />
+        this.sidebarMenuHtml += `<hr class="sidebar-divider mt-2" />
         <div class="sidebar-heading">${menu[i].menu}</div>`;
 
         for(let j = 0; j < this.subMenu[i].length; j++){
           this.sidebarMenuHtml += `<li class="nav-item">
-          <a class="nav-link" href="${this.subMenu[i][j].url}">
+          <a class="nav-link pb-0" href="${this.subMenu[i][j].url}">
           <i class="${this.subMenu[i][j].icon}"></i>
           <span>${this.subMenu[i][j].title}</span></a>
           </li>`;

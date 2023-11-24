@@ -226,18 +226,28 @@ public class AccessMenuController {
       @PathVariable("menu_id") int menu_id) {
     ResponseData<AccessMenuResponse> response = new ResponseData<>();
     try {
-      if (accessMenuService.existsAccessMenu(role_id, menu_id).equals(null)) {
-        response.setStatus(true);
-        response.setPayload(null);
-        response.getMessage().add("Access menu tidak ditemukan!");
-        return ResponseEntity.ok(response);
-      } else {
-        response.setStatus(true);
-        response.getMessage().add("Access menu berhasil ditemukan!");
-        response.setPayload(
-            modelMapper.map(accessMenuService.existsAccessMenu(role_id, menu_id), AccessMenuResponse.class));
-        return ResponseEntity.ok(response);
-      }
+      response.setStatus(true);
+      response.getMessage().add("Access menu berhasil ditemukan!");
+      response.setPayload(
+          modelMapper.map(accessMenuService.existsAccessMenu(role_id, menu_id), AccessMenuResponse.class));
+      return ResponseEntity.ok(response);
+    } catch (Exception e) {
+      response.setStatus(false);
+      response.setPayload(null);
+      response.getMessage().add(e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+  }
+
+  @GetMapping("/existsAccessMenuCount/{role_id}/{menu_id}")
+  public ResponseEntity<ResponseData<String>> getExistsAccessMenuCount(@PathVariable("role_id") int role_id,
+      @PathVariable("menu_id") int menu_id) {
+    ResponseData<String> response = new ResponseData<>();
+    try {
+      response.setStatus(true);
+      response.getMessage().add("Access menu berhasil ditemukan!");
+      response.setPayload(accessMenuService.existsAccessMenuCount(role_id, menu_id));
+      return ResponseEntity.ok(response);
     } catch (Exception e) {
       response.setStatus(false);
       response.setPayload(null);

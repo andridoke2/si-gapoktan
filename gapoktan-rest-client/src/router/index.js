@@ -84,7 +84,7 @@ const routes = [
     path: '/role',
     component: Role,
     meta: {
-      title: 'Role',
+      title: 'User Role',
     },
   },
 
@@ -96,7 +96,7 @@ const routes = [
     component: Access,
     name: 'access',
     meta: {
-      title: 'Role',
+      title: 'Role Access',
     },
   },
 
