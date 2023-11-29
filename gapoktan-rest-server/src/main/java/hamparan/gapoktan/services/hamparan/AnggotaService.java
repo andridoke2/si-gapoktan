@@ -125,8 +125,8 @@ public class AnggotaService {
     }
   }
 
-  public Iterable<Anggota> findAll() {
-    return repository.findAll();
+  public Iterable<Anggota> findAll(Pageable pageable) {
+    return repository.findAll(pageable);
   }
 
   public void removeOne(String kodeAnggota) {

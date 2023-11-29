@@ -15,12 +15,13 @@
       <div class="sidebar-brand-text mx-3">SI-GAPOKTAN</div>
     </router-link>
 
+    <!-- menampilkan menu pada sidebar dari database -->
     <div v-html="sidebarMenuHtml"></div>
 
     <hr class="sidebar-divider mb-0" />
     <!-- Logout Button -->
     <li class="nav-item">
-      <a class="nav-link" href="#" @click="logout">
+      <a class="nav-link pb-0 pt-0" href="#" @click="logout">
         <i class="fas fa-fw fa-sign-out-alt"></i>
         <span>Logout</span></a
       >

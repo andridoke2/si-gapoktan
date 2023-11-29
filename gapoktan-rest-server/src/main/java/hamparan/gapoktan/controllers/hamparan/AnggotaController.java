@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hamparan.gapoktan.dto.ResponseData;
@@ -27,6 +28,7 @@ import hamparan.gapoktan.dto.response.AnggotaResponse;
 import hamparan.gapoktan.model.entities.hamparan.Anggota;
 import hamparan.gapoktan.services.hamparan.AnggotaService;
 import hamparan.gapoktan.utils.ErrorParsingUtility;
+import hamparan.gapoktan.utils.PaginationConfig;
 import jakarta.validation.Valid;
 
 @RestController
@@ -122,20 +124,46 @@ public class AnggotaController {
    * GET ALL
    * Mengambil semua data anggota
    * 
+   * fungsi tanpa menggunakan pagination.
+   * 
+   * @return
+   */
+
+  /**
+   * @GetMapping
+   *             public ResponseEntity<ResponseData<List<AnggotaResponse>>>
+   *             findAll() {
+   * 
+   *             ResponseData<List<AnggotaResponse>> response = new
+   *             ResponseData<>();
+   *             List<AnggotaResponse> listAnggota = new ArrayList<>();
+   *             service.findAll().forEach(anggota -> {
+   *             listAnggota.add(modelMapper.map(anggota, AnggotaResponse.class));
+   *             });
+   *             response.setStatus(true);
+   *             response.setPayload(listAnggota);
+   *             response.getMessage().add("Data anggota berhasil ditemukan!");
+   *             return ResponseEntity.ok(response);
+   *             }
+   * 
+   */
+
+  /**
+   * fungsi menggunakan pagination.
+   * fungsi ini terdapat kekurangan yaitu, masih belum mengimplementasikan model
+   * mapper dimana kegunaan dari model mapper yaitu untuk memfilter data yang akan
+   * dikirim kepada client sesuai dengan kebutuhan saja.
+   * 
+   * @param page
+   * @param size
    * @return
    */
   @GetMapping
-  public ResponseEntity<ResponseData<List<AnggotaResponse>>> findAll() {
-
-    ResponseData<List<AnggotaResponse>> response = new ResponseData<>();
-    List<AnggotaResponse> listAnggota = new ArrayList<>();
-    service.findAll().forEach(anggota -> {
-      listAnggota.add(modelMapper.map(anggota, AnggotaResponse.class));
-    });
-    response.setStatus(true);
-    response.setPayload(listAnggota);
-    response.getMessage().add("Data anggota berhasil ditemukan!");
-    return ResponseEntity.ok(response);
+  public Iterable<Anggota> findAll(
+      @RequestParam(defaultValue = PaginationConfig.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(defaultValue = PaginationConfig.DEFAULT_SIZE_NUMBER) int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    return service.findAll(pageable);
   }
 
   /**
