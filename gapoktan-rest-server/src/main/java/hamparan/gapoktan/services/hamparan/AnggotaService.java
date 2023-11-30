@@ -2,12 +2,19 @@ package hamparan.gapoktan.services.hamparan;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import hamparan.gapoktan.dto.response.AnggotaResponse;
+import hamparan.gapoktan.dto.response.AnggotaResponsePagination;
 import hamparan.gapoktan.helpers.DefaultData;
 import hamparan.gapoktan.helpers.GenerateKode;
 import hamparan.gapoktan.model.entities.auth.UserRoleEnum;
@@ -27,6 +34,9 @@ public class AnggotaService {
    */
   @Autowired
   private AnggotaRepository repository;
+
+  @Autowired
+  private ModelMapper modelMapper = new ModelMapper();
 
   private GenerateKode generateKode = new GenerateKode();
 
@@ -127,6 +137,31 @@ public class AnggotaService {
 
   public Iterable<Anggota> findAll(Pageable pageable) {
     return repository.findAll(pageable);
+  }
+
+  public AnggotaResponsePagination findAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+
+    Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+    Page<Anggota> anggota = repository.findAll(pageable);
+
+    List<Anggota> listAnggota = anggota.getContent();
+
+    List<AnggotaResponse> content = listAnggota.stream()
+        .map(singleAnggota -> modelMapper.map(singleAnggota, AnggotaResponse.class))
+        .collect(Collectors.toList());
+
+    AnggotaResponsePagination response = new AnggotaResponsePagination();
+    response.setContent(content);
+    response.setPageNumber(anggota.getNumber());
+    response.setPageSize(anggota.getSize());
+    response.setTotalElements(anggota.getTotalElements());
+    response.setTotalPage(anggota.getTotalPages());
+    response.setLastPage(anggota.isLast());
+
+    return response;
   }
 
   public void removeOne(String kodeAnggota) {

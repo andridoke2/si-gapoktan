@@ -25,6 +25,7 @@ import hamparan.gapoktan.dto.ResponseData;
 import hamparan.gapoktan.dto.SearchData;
 import hamparan.gapoktan.dto.request.AnggotaRequest;
 import hamparan.gapoktan.dto.response.AnggotaResponse;
+import hamparan.gapoktan.dto.response.AnggotaResponsePagination;
 import hamparan.gapoktan.model.entities.hamparan.Anggota;
 import hamparan.gapoktan.services.hamparan.AnggotaService;
 import hamparan.gapoktan.utils.ErrorParsingUtility;
@@ -157,13 +158,34 @@ public class AnggotaController {
    * @param page
    * @param size
    * @return
+   * @GetMapping
+   * 
+   *             ini endpoint untuk find all menggunakan pagination basic.
+   * 
+   *             public Iterable<Anggota> findAll(
+   * @RequestParam(defaultValue = PaginationConfig.DEFAULT_PAGE_NUMBER) int page,
+   * @RequestParam(defaultValue = PaginationConfig.DEFAULT_SIZE_NUMBER) int size)
+   *                            {
+   *                            Pageable pageable = PageRequest.of(page, size);
+   *                            return service.findAll(pageable);
+   *                            }
+   */
+
+  /**
+   * 
+   * @param pageNo
+   * @param pageSize
+   * @param sortBy
+   * @param sortDir
+   * @return
    */
   @GetMapping
-  public Iterable<Anggota> findAll(
-      @RequestParam(defaultValue = PaginationConfig.DEFAULT_PAGE_NUMBER) int page,
-      @RequestParam(defaultValue = PaginationConfig.DEFAULT_SIZE_NUMBER) int size) {
-    Pageable pageable = PageRequest.of(page, size);
-    return service.findAll(pageable);
+  public AnggotaResponsePagination findAll(
+      @RequestParam(value = "pageNo", defaultValue = PaginationConfig.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+      @RequestParam(value = "pageSize", defaultValue = PaginationConfig.DEFAULT_SIZE_NUMBER, required = false) int pageSize,
+      @RequestParam(value = "sortBy", defaultValue = PaginationConfig.DEFAULT_SORT_BY) String sortBy,
+      @RequestParam(value = "sortDir", defaultValue = PaginationConfig.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
+    return service.findAll(pageNo, pageSize, sortBy, sortDir);
   }
 
   /**
