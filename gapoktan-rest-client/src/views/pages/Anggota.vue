@@ -120,37 +120,21 @@
                   Data masih kosong!
                 </div>
 
-                <!-- pagination -->
-                <div class="row">
-                  <div class="col">
-                    <nav aria-label="Page navigation example">
-                      <ul
-                        class="pagination pagination-sm justify-content-center"
-                      >
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                          </a>
-                        </li>
-                        <li class="page-item active">
-                          <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                          <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                </div>
-                <!-- ./pagination -->
+                <!-- Reuseable Pagination -->
+                <pagination
+                  :totalPages="pagination.response.totalPage"
+                  :perPage="pagination.response.pageSize"
+                  :currentPage="pagination.currentPage"
+                  @pagechanged="
+                    onPageChange(
+                      pagination.request.pageNo,
+                      pagination.request.pageSize,
+                      pagination.request.sortBy,
+                      pagination.request.sortDir
+                    )
+                  "
+                />
+                <!-- Reuseable Pagination -->
               </div>
             </div>
           </div>
@@ -846,6 +830,9 @@ import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
 
+/** pagination */
+import Pagination from '@/components/Pagination.vue';
+
 /** API Configuration */
 const baseURL = '/api/hamparan';
 const TOKEN = localStorage.getItem('token');
@@ -858,8 +845,8 @@ const header = {
 /**
  * Fitur yang kurang untuk Halaman Anggota sejauh ini yaitu :
  * 1. Pagination
- * 2. Search
- * 3. Export
+ * 2. Search Data
+ * 3. Export Data
  */
 
 export default {
@@ -869,12 +856,14 @@ export default {
     Sidebar,
     Navbar,
     Footer,
+    Pagination,
   },
 
   data() {
     return {
-      listAnggota: [],
+      listAnggota: [], // variabel untuk menampung list data anggota
       payload: {
+        // untuk menangkap data form anggota (tambah, ubah dan detail)
         kd_anggota: '',
         nama_anggota: '',
         alamat: '',
@@ -890,30 +879,88 @@ export default {
       },
       url: null,
       alert: {
+        // variable untuk set alert (success dan error)
         icon: '',
         title: '',
         text: '',
       },
-      isValidForm: false,
-      formErrorMessage: '',
+      isValidForm: false, // variable untuk validasi form
+      formErrorMessage: '', // variable untuk menyimpan pesan error form
+      pagination: {
+        // variable untuk menyimpan informasi pagination
+        request: {
+          pageNo: 0,
+          pageSize: 7,
+          sortBy: 'golongan',
+          sortDir: 'asc',
+        },
+        response: {
+          pageNumber: 0,
+          pageSize: 0,
+          totalElements: 0,
+          totalPage: 0,
+          lastPage: false,
+        },
+        currentPage: 1,
+      },
     };
   },
 
+  /**
+   * sampai di pagination masih belum jalan.
+   */
+
+  /**
+   * fungsi untuk me-load data saat halaman pertama kali diakses.
+   */
   async created() {
-    await this.loadAnggota();
+    this.pagination.request = {
+      pageNo: this.pagination.currentPage,
+      pageSize: 7,
+      sortBy: 'golongan',
+      sortDir: 'desc',
+    };
+
+    /**
+     * load data anggota ketika pertama kali halaman anggota dibuka.
+     */
+    await this.loadAnggota(
+      this.pagination.request.pageNo,
+      this.pagination.request.pageSize,
+      this.pagination.request.sortBy,
+      this.pagination.request.sortDir
+    );
   },
 
   methods: {
-    async loadAnggota() {
+    /**
+     * fungsi untuk me-load data anggota dari rest server.
+     *
+     * @param {*} pageNo
+     * @param {*} pageSize
+     * @param {*} sortBy
+     * @param {*} sortDir
+     */
+    async loadAnggota(pageNo, pageSize, sortBy, sortDir) {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota`, header)
+        .get(
+          `${baseURL}/anggota?pageNo=${
+            pageNo - 1
+          }&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
+          header
+        )
         .then((res) => {
-          if (res.data.status) {
-            berhasil = true;
-            this.listAnggota = res.data.payload;
-          }
+          berhasil = true;
+          this.listAnggota = res.data.content;
+          this.pagination.response = {
+            pageNumber: res.data.pageNumber,
+            pageSize: res.data.pageSize,
+            totalElements: res.data.totalElements,
+            totalPage: res.data.totalPage,
+            lastPage: res.data.lastPage,
+          };
         })
         .catch((err) => {
           berhasil = false;
@@ -922,12 +969,20 @@ export default {
         .finally(() => {
           if (berhasil) {
             console.info('(anggota) berhasil load anggota...');
+            console.log(this.listAnggota);
+            console.log(this.pagination.response);
           } else {
             console.error('(anggota) gagal load anggota...');
           }
         });
     },
 
+    /**
+     * Create Anggota
+     * method ini digunakan untuk melakukan request ke rest server
+     * yang berfungsi untuk membuat anggota baru.
+     * @param {*} e
+     */
     async createAnggota(e) {
       e.preventDefault();
 
@@ -970,6 +1025,13 @@ export default {
         });
     },
 
+    /**
+     * set update payload
+     * fingsi ini digunakan untuk mengambil object data anggota dari array
+     * dilooping pada halaman daftar anggota.
+     *
+     * @param {*} anggota
+     */
     setUpdatePayload(anggota) {
       this.payload.kd_anggota = anggota.kd_anggota;
       this.payload.nama_anggota = anggota.nama_anggota;
@@ -980,6 +1042,13 @@ export default {
       this.payload.email = anggota.email;
     },
 
+    /**
+     * Update Anggota
+     * method ini melakukan request ke rest server berfungsi untuk melakukan
+     * perubahan pada data anggota.
+     *
+     * @param {*} e
+     */
     async updateAnggota(e) {
       e.preventDefault();
 
@@ -1014,6 +1083,10 @@ export default {
         });
     },
 
+    /**
+     * delete anggota digunakan untuk menghapus data anggota.
+     * @param {*} kd_anggota
+     */
     async deleteAnggota(kd_anggota) {
       let berhasil = false;
       await axios
@@ -1035,17 +1108,26 @@ export default {
            */
           if (berhasil) {
             await this.loadAnggota();
-            this.alert.icon = 'success';
-            this.alert.title = 'Success!';
-            this.alert.text = 'Data berhasil dihapus!';
+            /**
+             * baru ditambahkan... belum dilakukan percobaan.
+             */
+            this.showAlert('success', 'Success!', 'Data berhasil dihapus!');
           } else {
-            this.alert.icon = 'error';
-            this.alert.title = 'Failed!';
-            this.alert.text = 'Data gagal dihapus!';
+            /**
+             * baru ditambahkan... belum dilakukan percobaan.
+             */
+            this.showAlert('error', 'Failed!', 'Data gagal dihapus!');
           }
         });
     },
 
+    /**
+     * fungsi detail anggota digunakan untuk menampilkan detail data anggota.
+     * Detail data anggota tidak perlu lagi melakukan request ke server karena,
+     * data tersebut dapat diambil dari object anggota yang sudah dilooping pada halaman
+     * daftar anggota.
+     * @param {*} anggota
+     */
     detailAnggota(anggota) {
       this.payload.kd_anggota = anggota.kd_anggota;
       this.payload.nama_anggota = anggota.nama_anggota;
@@ -1061,6 +1143,10 @@ export default {
       this.payload.date_created = anggota.date_created;
     },
 
+    /**
+     * clear payload digunakan untuk me-reset data.
+     * kebutuhan dari fungsi ini terdapat pada halaman tambah, ubah & detail.
+     */
     clearPayload() {
       this.payload.kd_anggota = '';
       this.payload.nama_anggota = '';
@@ -1076,11 +1162,22 @@ export default {
       this.payload.date_created = '';
     },
 
+    /**
+     * on file change digunakan untuk menampilkan file pada halaman form tambah anggota.
+     * @param {*} e
+     */
     onFileChange(e) {
       const file = e.target.files[0];
       this.url = URL.createObjectURL(file);
     },
 
+    /**
+     * sweetalert merupakan library js yang digunakan untuk menampilkan alert menjadi
+     * lebih menarik.
+     * @param {*} icon
+     * @param {*} title
+     * @param {*} text
+     */
     showAlert(icon, title, text) {
       this.$swal({
         icon: icon,
@@ -1089,11 +1186,24 @@ export default {
       });
     },
 
+    /**
+     * fungsi untuk mengubah date created menjadi format waktu yang dapat dibaca manusia.
+     * salah satu implementasi dari fungsi ini yaitu pada halaman detail anggota.
+     *
+     * @param {*} timestamp
+     */
     timestamp(timestamp) {
       const date = new Date(parseInt(timestamp));
       return `${date.getDate()}/${
         date.getMonth() + 1
       }/${date.getFullYear()} | ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    },
+
+    async onPageChange(pageNo, pageSize, sortBy, sortDir) {
+      console.log(pageNo);
+
+      await this.loadAnggota(pageNo, pageSize, sortBy, sortDir);
+      this.pagination.currentPage = pageNo;
     },
   },
 };
