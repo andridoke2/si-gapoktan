@@ -56,20 +56,11 @@
 
 <script>
 import axios from 'axios';
-// import $ from 'jquery';
+import RAC from '@/config/RestAPIConfig';
 
 import Navbar from '@/components/Navbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 /**
  * endpoint check_access : "/getaccessbyroleidmenuid/{role_id}/{menu_id}"
@@ -123,7 +114,7 @@ export default {
     async getRoleAccess() {
       await this.getRoleById(this.roleIdParam);
       await axios
-        .get(`${baseURL}/menu/getroleaccessmenu`, header)
+        .get(`${RAC.BASE_URL}/menu/getroleaccessmenu`, RAC.HEADER)
         .then(async (res) => {
           if (res.data.status) {
             this.listMenu = res.data.payload;
@@ -145,7 +136,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/role/getbyid/${id}`, header)
+        .get(`${RAC.BASE_URL}/role/getbyid/${id}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -172,7 +163,10 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/existsAccessMenuCount/${role_id}/${menu_id}`, header)
+        .get(
+          `${RAC.BASE_URL}/existsAccessMenuCount/${role_id}/${menu_id}`,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -195,8 +189,8 @@ export default {
     async checkboxAccessMenu(roleId, menuId) {
       await axios
         .get(
-          `${baseURL}/accessmenu/getaccessbyroleidmenuid/${roleId}/${menuId}`,
-          header
+          `${RAC.BASE_URL}/accessmenu/getaccessbyroleidmenuid/${roleId}/${menuId}`,
+          RAC.HEADER
         )
         .then((res) => {
           this.listRoleAccess = res.data.payload;

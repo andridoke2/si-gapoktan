@@ -143,20 +143,12 @@
 <script>
 /** library */
 import axios from 'axios';
+import RAC from '@/config/RestAPIConfig';
 
 /** component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfDashboard',
@@ -186,7 +178,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/submenu`, header)
+        .get(`${RAC.BASE_URL}/submenu`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;

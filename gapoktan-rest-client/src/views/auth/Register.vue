@@ -88,6 +88,10 @@
 </template>
 
 <script>
+/**
+ * fitur register belum jalan.
+ */
+
 export default {
   name: 'AuthRegister',
 };

@@ -67,9 +67,7 @@
 
 <script>
 import axios from 'axios';
-
-/** configuration */
-const url = '/api/auth/authenticate';
+import RAC from '@/config/RestAPIConfig';
 
 export default {
   name: 'AuthLogin',
@@ -89,19 +87,13 @@ export default {
     async login(e) {
       e.preventDefault();
 
-      /**
-       * user role
-       */
-      const ADMIN_ROLE = 'ADMIN';
-      const USER_ROLE = 'USER';
-
       const request = {
         email: this.auth.email,
         password: this.auth.password,
       };
 
       await axios
-        .post(url, request)
+        .post(RAC.AUTHENTICATION_URL, request)
         .then((res) => {
           if (res.data.status) {
             this.loggedin = true;
@@ -120,11 +112,11 @@ export default {
           if (this.loggedin) {
             const role = localStorage.getItem('role');
 
-            if (role === ADMIN_ROLE) {
+            if (role === RAC.ADMIN_ROLE) {
               this.$router.push('/dashboard');
             }
 
-            if (role === USER_ROLE) {
+            if (role === RAC.USER_ROLE) {
               this.$router.push('/dashboarduser');
             }
           } else {

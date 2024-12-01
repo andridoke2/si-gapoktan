@@ -148,6 +148,7 @@
 <script>
 /** library */
 import axios from 'axios';
+import RAC from '@/config/RestAPIConfig';
 
 /** import chartjs component */
 import PenghasilanChart from '@/components/chart/PenghasilanChart.vue';
@@ -156,17 +157,6 @@ import PenghasilanChart from '@/components/chart/PenghasilanChart.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const EMAIL = localStorage.getItem('email');
-
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'DashboardUser',
@@ -187,7 +177,7 @@ export default {
   },
 
   async created() {
-    await this.findUserByEmail(EMAIL);
+    await this.findUserByEmail(RAC.EMAIL);
     if (this.user) {
       await this.findKebunByKodeAnggota(this.user.kd_anggota);
       await this.findPenghasilanByKodeAnggota(this.user.kd_anggota);
@@ -203,7 +193,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota/getbyemail/${email}`, header)
+        .get(`${RAC.BASE_URL}/anggota/getbyemail/${email}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -231,7 +221,11 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/kebun/search/bykodeanggota`, searchData, header)
+        .post(
+          `${RAC.BASE_URL}/kebun/search/bykodeanggota`,
+          searchData,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -259,7 +253,11 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/detailhasil/penghasilan/anggota`, searchData, header)
+        .post(
+          `${RAC.BASE_URL}/detailhasil/penghasilan/anggota`,
+          searchData,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;

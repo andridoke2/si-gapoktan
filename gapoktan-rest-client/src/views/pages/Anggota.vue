@@ -824,6 +824,7 @@
 /** library */
 import axios from 'axios';
 import $ from 'jquery';
+import RAC from '@/config/RestAPIConfig';
 
 /** component */
 import Sidebar from '@/components/Sidebar.vue';
@@ -832,15 +833,6 @@ import Footer from '@/components/Footer.vue';
 
 /** pagination */
 import Pagination from '@/components/Pagination.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 /**
  * Fitur yang kurang untuk Halaman Anggota sejauh ini yaitu :
@@ -911,6 +903,7 @@ export default {
    */
 
   /**
+   * first function running access.
    * fungsi untuk me-load data saat halaman pertama kali diakses.
    */
   async created() {
@@ -946,10 +939,10 @@ export default {
 
       await axios
         .get(
-          `${baseURL}/anggota?pageNo=${
+          `${RAC.BASE_URL}/anggota?pageNo=${
             pageNo - 1
           }&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
-          header
+          RAC.HEADER
         )
         .then((res) => {
           berhasil = true;
@@ -998,7 +991,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/anggota`, payload, header)
+        .post(`${RAC.BASE_URL}/anggota`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.alert.icon = 'success';
@@ -1056,7 +1049,7 @@ export default {
 
       const payload = this.payload;
       await axios
-        .put(`${baseURL}/anggota`, payload, header)
+        .put(`${RAC.BASE_URL}/anggota`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.alert.icon = 'success';
@@ -1090,7 +1083,7 @@ export default {
     async deleteAnggota(kd_anggota) {
       let berhasil = false;
       await axios
-        .delete(`${baseURL}/anggota/${kd_anggota}`, header)
+        .delete(`${RAC.BASE_URL}/anggota/${kd_anggota}`, RAC.HEADER)
         .then((res) => {
           console.log(res);
           berhasil = true;
@@ -1179,11 +1172,13 @@ export default {
      * @param {*} text
      */
     showAlert(icon, title, text) {
-      this.$swal({
-        icon: icon,
-        title: title,
-        text: text,
-      });
+      /** fitur ini belum jalan */
+      this.showAlert(icon, title, text);
+      // this.$swal({
+      //   icon: icon,
+      //   title: title,
+      //   text: text,
+      // });
     },
 
     /**

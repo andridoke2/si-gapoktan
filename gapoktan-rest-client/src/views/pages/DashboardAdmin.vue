@@ -311,6 +311,7 @@
 
 <script>
 import axios from 'axios';
+import RAC from '@/config/RestAPIConfig';
 
 /** import chartjs component */
 import BarChart from '@/components/chart/Bar.vue';
@@ -320,15 +321,6 @@ import HasilChart from '@/components/chart/HasilChart.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'DashboardAdmin',
@@ -368,7 +360,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota`, header)
+        .get(`${RAC.BASE_URL}/anggota`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -392,7 +384,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/kebun`, header)
+        .get(`${RAC.BASE_URL}/kebun`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -416,7 +408,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/mobil`, header)
+        .get(`${RAC.BASE_URL}/mobil`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -440,7 +432,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/hasil`, header)
+        .get(`${RAC.BASE_URL}/hasil`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -464,7 +456,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/harga`, header)
+        .get(`${RAC.BASE_URL}/harga`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -488,7 +480,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/pajak`, header)
+        .get(`${RAC.BASE_URL}/pajak`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -512,7 +504,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/pengurus`, header)
+        .get(`${RAC.BASE_URL}/pengurus`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;

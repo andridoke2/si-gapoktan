@@ -75,12 +75,12 @@
                   >
                     <tr>
                       <th scope="row">{{ ++index }}</th>
-                      <td>{{ harga.sawit }}</td>
-                      <td>{{ harga.mobil }}</td>
-                      <td>{{ harga.pemuat }}</td>
-                      <td>{{ harga.penimbang }}</td>
-                      <td>{{ harga.pengurus }}</td>
-                      <td>{{ harga.pajak }}</td>
+                      <td>{{ formatRupiah(harga.sawit) }}</td>
+                      <td>{{ formatRupiah(harga.mobil) }}</td>
+                      <td>{{ formatRupiah(harga.pemuat) }}</td>
+                      <td>{{ formatRupiah(harga.penimbang) }}</td>
+                      <td>{{ formatRupiah(harga.pengurus) }}</td>
+                      <td>{{ formatRupiah(harga.pajak) }} %</td>
                       <td>
                         <a
                           href=""
@@ -464,21 +464,13 @@
 /** Libarry */
 import axios from 'axios';
 import $ from 'jquery';
+import FN from '@/helpers/FormatNumber';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfHarga',
@@ -519,7 +511,7 @@ export default {
     async loadHarga() {
       let berhasil = false;
       await axios
-        .get(`${baseURL}/harga`, header)
+        .get(`${RAC.BASE_URL}/harga`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -554,7 +546,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/harga`, payload, header)
+        .post(`${RAC.BASE_URL}/harga`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -599,7 +591,7 @@ export default {
       const payload = { ...this.payload };
 
       await axios
-        .put(`${baseURL}/harga`, payload, header)
+        .put(`${RAC.BASE_URL}/harga`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -629,7 +621,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .delete(`${baseURL}/harga/${kd_harga}`, header)
+        .delete(`${RAC.BASE_URL}/harga/${kd_harga}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -678,6 +670,14 @@ export default {
       return `${date.getDate()}/${
         date.getMonth() + 1
       }/${date.getFullYear()} | ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    },
+
+    /**
+     * format rupiah
+     * @param {*} value
+     */
+    formatRupiah(value) {
+      return FN.formatRupiah(value);
     },
   },
 };

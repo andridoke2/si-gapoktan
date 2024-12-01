@@ -555,20 +555,12 @@
 /** Libarry */
 import axios from 'axios';
 import $ from 'jquery';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfMobil',
@@ -607,7 +599,7 @@ export default {
     async loadMobil() {
       let berhasil = false;
       await axios
-        .get(`${baseURL}/mobil`, header)
+        .get(`${RAC.BASE_URL}/mobil`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -637,7 +629,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/mobil`, payload, header)
+        .post(`${RAC.BASE_URL}/mobil`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -675,7 +667,7 @@ export default {
       const payload = this.payload;
 
       await axios
-        .put(`${baseURL}/mobil`, payload, header)
+        .put(`${RAC.BASE_URL}/mobil`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -709,7 +701,7 @@ export default {
 
     async getPemilik(kd_anggota) {
       await axios
-        .get(`${baseURL}/anggota/${kd_anggota}`, header)
+        .get(`${RAC.BASE_URL}/anggota/${kd_anggota}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.pemilik = res.data.payload;
@@ -723,7 +715,7 @@ export default {
     async deleteMobil(kd_mobil) {
       let berhasil = false;
       await axios
-        .delete(`${baseURL}/mobil/${kd_mobil}`, header)
+        .delete(`${RAC.BASE_URL}/mobil/${kd_mobil}`, RAC.HEADER)
         .then((res) => {
           console.log(res);
           berhasil = true;

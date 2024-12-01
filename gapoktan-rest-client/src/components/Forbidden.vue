@@ -33,15 +33,12 @@
 </template>
 
 <script>
+import RAC from '@/config/RestAPIConfig';
+
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/**
- * user login role
- */
-const ROLE = localStorage.getItem('role');
 
 export default {
   name: 'PageOfForbidden',
@@ -53,7 +50,7 @@ export default {
 
   data() {
     return {
-      role: ROLE,
+      role: RAC.ROLE,
     };
   },
 

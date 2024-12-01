@@ -208,22 +208,12 @@
 <script>
 /** Libarry */
 import axios from 'axios';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const EMAIL = localStorage.getItem('email');
-
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfKebunMobilAnggota',
@@ -244,7 +234,7 @@ export default {
 
   async created() {
     /** dapatkan data anggota dari server */
-    await this.findAnggotaByEmail(EMAIL);
+    await this.findAnggotaByEmail(RAC.EMAIL);
     /** cek golongan anggota */
     switch (this.anggota.golongan) {
       case 'Petani':
@@ -277,7 +267,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota/getbyemail/${email}`, header)
+        .get(`${RAC.BASE_URL}/anggota/getbyemail/${email}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -312,7 +302,11 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/kebun/search/bykodeanggota`, searchData, header)
+        .post(
+          `${RAC.BASE_URL}/kebun/search/bykodeanggota`,
+          searchData,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -346,7 +340,11 @@ export default {
        */
 
       await axios
-        .post(`${baseURL}/mobil/search/bykodeanggota`, searchData, header)
+        .post(
+          `${RAC.BASE_URL}/mobil/search/bykodeanggota`,
+          searchData,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;

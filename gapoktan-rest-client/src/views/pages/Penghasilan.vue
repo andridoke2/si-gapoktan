@@ -365,22 +365,13 @@
 <script>
 /** Libarry */
 import axios from 'axios';
+import FN from '@/helpers/FormatNumber';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const EMAIL = localStorage.getItem('email');
-
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfPenghasilan',
@@ -406,7 +397,7 @@ export default {
   },
 
   async created() {
-    await this.findUserByEmail(EMAIL);
+    await this.findUserByEmail(RAC.EMAIL);
     if (this.user) {
       await this.loadPenghasilanAnggota();
     }
@@ -422,7 +413,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota/getbyemail/${email}`, header)
+        .get(`${RAC.BASE_URL}/anggota/getbyemail/${email}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -450,7 +441,11 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/detailhasil/penghasilan/anggota`, searchData, header)
+        .post(
+          `${RAC.BASE_URL}/detailhasil/penghasilan/anggota`,
+          searchData,
+          RAC.HEADER
+        )
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -481,7 +476,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/detailhasil/penghasilan`, request, header)
+        .post(`${RAC.BASE_URL}/detailhasil/penghasilan`, request, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -510,23 +505,11 @@ export default {
     },
 
     /**
-     * Build-in js library
-     *
-     * Intl.NumberFormat
-     * JavaScript has a number formatter (part of the Internationalization API).
-     *
-     * NOTE : masih belum sesuai dengan keinginan.
-     *
+     * Format digit angka menjadi rupiah.
+     * @param {*} value
      */
     formatRupiah(value) {
-      // Create our number formatter.
-      const formatter = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        maximumFractionDigits: 3,
-      });
-
-      return formatter.format(value);
+      return FN.formatRupiah(value);
     },
   },
 };

@@ -33,15 +33,7 @@
 </template>
 <script lang="js">
 import axios from 'axios';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`
-        }
-      };
+import RAC from '@/config/RestAPIConfig';
 
 export default {
   name: 'SidebarComponent',
@@ -57,7 +49,7 @@ export default {
   },
 
   async created(){
-    await this.getUser(localStorage.getItem('email'));
+    await this.getUser(RAC.EMAIL);
     await this.getRole(this.user.role);
     await this.getMenu(this.role.id);
     await this.setSidebarMenu(this.menu); /** set sidebar menu from database */
@@ -65,7 +57,7 @@ export default {
 
   methods: {
     async getUser(email){
-      await axios.get(`${baseURL}/anggota/getbyemail/${email}`, header)
+      await axios.get(`${RAC.BASE_URL}/anggota/getbyemail/${email}`, RAC.HEADER)
       .then(res => {
         if(res.data.status){
           this.user = res.data.payload;
@@ -77,7 +69,7 @@ export default {
     },
 
     async getRole(role){
-      await axios.get(`${baseURL}/role/getbyname/${role}`, header)
+      await axios.get(`${RAC.BASE_URL}/role/getbyname/${role}`, RAC.HEADER)
       .then(res => {
         if(res.data.status){
           this.role = res.data.payload;
@@ -89,7 +81,7 @@ export default {
     },
 
     async getMenu(roleId){
-      await axios.get(`${baseURL}/menu/getaccessmenubyroleid/${roleId}`, header)
+      await axios.get(`${RAC.BASE_URL}/menu/getaccessmenubyroleid/${roleId}`, RAC.HEADER)
       .then(res => {
         if(res.data.status){
           this.menu = res.data.payload;
@@ -101,7 +93,7 @@ export default {
     },
 
     async getSubMenu(menuId){
-      const response = await axios.get(`${baseURL}/submenu/getaccesssubmenubymenuid/${menuId}`, header);
+      const response = await axios.get(`${RAC.BASE_URL}/submenu/getaccesssubmenubymenuid/${menuId}`, RAC.HEADER);
       return response.data.payload;
     },
 

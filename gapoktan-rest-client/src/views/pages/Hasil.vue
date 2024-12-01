@@ -402,7 +402,7 @@
                 <label for="sawit">Sawit</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.sawit }} /kg</p>
+                <p>{{ formatRupiah(harga.sawit) }}</p>
               </div>
             </div>
             <div class="row">
@@ -410,7 +410,7 @@
                 <label for="mobil">Mobil</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.mobil }} /kg</p>
+                <p>{{ formatRupiah(harga.mobil) }}</p>
               </div>
             </div>
             <div class="row">
@@ -418,7 +418,7 @@
                 <label for="pemuat">Pemuat</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.pemuat }} /kg</p>
+                <p>{{ formatRupiah(harga.pemuat) }}</p>
               </div>
             </div>
             <div class="row">
@@ -426,7 +426,7 @@
                 <label for="penimbang">Penimbang</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.penimbang }} /kg</p>
+                <p>{{ formatRupiah(harga.penimbang) }}</p>
               </div>
             </div>
             <div class="row">
@@ -434,7 +434,7 @@
                 <label for="pengurus">Pengurus</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.pengurus }} /kg</p>
+                <p>{{ formatRupiah(harga.pengurus) }}</p>
               </div>
             </div>
             <div class="row">
@@ -442,7 +442,7 @@
                 <label for="pajak">Pajak</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ harga.pajak }} /kg</p>
+                <p>{{ formatRupiah(harga.pajak) }}</p>
               </div>
             </div>
             <div v-if="anggota.golongan == 'Petani'">
@@ -455,7 +455,7 @@
                   <label for="potongan_mobil">Potongan Mobil</label>
                 </div>
                 <div class="col-md-6">
-                  <p>Rp. {{ hasil.potongan_mobil }}</p>
+                  <p>{{ formatRupiah(hasil.potongan_mobil) }}</p>
                 </div>
               </div>
               <div class="row">
@@ -463,7 +463,7 @@
                   <label for="potongan_pemuat">Potongan Pemuat</label>
                 </div>
                 <div class="col-md-6">
-                  <p>Rp. {{ hasil.potongan_pemuat }}</p>
+                  <p>{{ formatRupiah(hasil.potongan_pemuat) }}</p>
                 </div>
               </div>
               <div class="row">
@@ -471,7 +471,7 @@
                   <label for="potongan_penimbang">Potongan Penimbang</label>
                 </div>
                 <div class="col-md-6">
-                  <p>Rp. {{ hasil.potongan_penimbang }}</p>
+                  <p>{{ formatRupiah(hasil.potongan_penimbang) }}</p>
                 </div>
               </div>
               <div class="row">
@@ -479,7 +479,7 @@
                   <label for="potongan_pengurus">Potongan Pengurus</label>
                 </div>
                 <div class="col-md-6">
-                  <p>Rp. {{ hasil.potongan_pengurus }}</p>
+                  <p>{{ formatRupiah(hasil.potongan_pengurus) }}</p>
                 </div>
               </div>
               <div class="row">
@@ -487,7 +487,7 @@
                   <label for="potongan_pajak">Potongan Pajak</label>
                 </div>
                 <div class="col-md-6">
-                  <p>Rp. {{ hasil.potongan_pajak }}</p>
+                  <p>{{ formatRupiah(hasil.potongan_pajak) }}</p>
                 </div>
               </div>
             </div>
@@ -516,7 +516,7 @@
                 <label for="total_potongan">Total Potongan</label>
               </div>
               <div class="col-md-6">
-                <p>Rp. {{ hasil.total_potongan }}</p>
+                <p>{{ formatRupiah(hasil.total_potongan) }}</p>
               </div>
             </div>
             <div class="row">
@@ -526,7 +526,9 @@
                 >
               </div>
               <div class="col-md-6">
-                <p class="font-weight-bold">Rp. {{ hasil.total_hasil }}</p>
+                <p class="font-weight-bold">
+                  {{ formatRupiah(hasil.total_hasil) }}
+                </p>
               </div>
             </div>
           </div>
@@ -734,20 +736,14 @@
 /** Libarry */
 import axios from 'axios';
 import $ from 'jquery';
+import FN from '@/helpers/FormatNumber';
+import FT from '@/helpers/FormatTime';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfHasil',
@@ -802,11 +798,14 @@ export default {
   },
 
   methods: {
+    /**
+     * load detail hasil
+     */
     async loadDetailHasil() {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/detailhasil`, header)
+        .get(`${RAC.BASE_URL}/detailhasil`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -824,6 +823,11 @@ export default {
         });
     },
 
+    /**
+     * create hasil
+     * fungsi ini digunakan untuk menambahkan data hasil baru.
+     * @param {*} e
+     */
     async createHasil(e) {
       e.preventDefault();
 
@@ -839,7 +843,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/hasil`, request, header)
+        .post(`${RAC.BASE_URL}/hasil`, request, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -866,6 +870,10 @@ export default {
         });
     },
 
+    /**
+     * find detail hasil
+     * @param {*} detailHasil
+     */
     async findDetailHasil(detailHasil) {
       let berhasil = false;
 
@@ -879,7 +887,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/detailhasil/penghasilan`, request, header)
+        .post(`${RAC.BASE_URL}/detailhasil/penghasilan`, request, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -903,6 +911,12 @@ export default {
         });
     },
 
+    /**
+     * Konfirmasi:
+     * fungsi ini digunakan untuk mengubah status dari hasil yang belum terambil
+     * menjadi sudah terambil.
+     * @param {*} konfirmasiData
+     */
     async konfirmasi(konfirmasiData) {
       let berhasil = false;
 
@@ -919,7 +933,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/detailhasil/konfirmasi`, request, header)
+        .post(`${RAC.BASE_URL}/detailhasil/konfirmasi`, request, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -940,6 +954,10 @@ export default {
         });
     },
 
+    /**
+     * set update payload
+     * @param {*} detailHasil
+     */
     async setUpdatePayload(detailHasil) {
       await this.findDetailHasil(detailHasil);
 
@@ -960,13 +978,17 @@ export default {
       this.payload.golongan = this.hasil.golongan;
     },
 
+    /**
+     * update hasil
+     * @param {*} e
+     */
     async updateHasil(e) {
       e.preventDefault();
 
       let berhasil = false;
 
       await axios
-        .put(`${baseURL}/hasil`, this.payload, header)
+        .put(`${RAC.BASE_URL}/hasil`, this.payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -994,15 +1016,17 @@ export default {
     },
 
     /**
+     * find anggota by kode
      * fungsi find anggota ini digunakan untuk menampilkan nama anggota pada table
      * berdasarkan kode anggota yang ada pada table detail hasil.
      * next jalankan fungsi ini pada table hasil anggota.
+     * @param {*} kd_anggota
      */
     async findAnggotaByKode(kd_anggota) {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/anggota/${kd_anggota}`, header)
+        .get(`${RAC.BASE_URL}/anggota/${kd_anggota}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.dataAnggota = res.data.payload;
@@ -1022,10 +1046,17 @@ export default {
         });
     },
 
+    /**
+     * fungsi untuk mengecek status hasil apakah sudah diambil oleh petani atau belum.
+     * @param {*} status
+     */
     checkStatus(status) {
       return status == 'Y' ? true : false;
     },
 
+    /**
+     * setup payload
+     */
     clearPayload() {
       this.payload.kd_hasil = '';
       this.payload.kd_anggota = '';
@@ -1037,6 +1068,12 @@ export default {
       this.payload.status = '';
     },
 
+    /**
+     * alert
+     * @param {*} icon
+     * @param {*} title
+     * @param {*} text
+     */
     showAlert(icon, title, text) {
       this.$swal({
         icon: icon,
@@ -1045,11 +1082,20 @@ export default {
       });
     },
 
+    /**
+     * timestamp
+     * @param {*} timestamp
+     */
     timestamp(timestamp) {
-      const date = new Date(parseInt(timestamp));
-      return `${date.getDate()}/${
-        date.getMonth() + 1
-      }/${date.getFullYear()} | ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+      return FT.timestamp(timestamp);
+    },
+
+    /**
+     * fungsi untuk mengubah angka digit menjadi pechan rupiah.
+     * @param {*} value
+     */
+    formatRupiah(value) {
+      return FN.formatRupiah(value);
     },
   },
 };

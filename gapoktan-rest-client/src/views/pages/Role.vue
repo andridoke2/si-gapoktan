@@ -205,19 +205,11 @@
 <script>
 import axios from 'axios';
 import $ from 'jquery';
+import RAC from '@/config/RestAPIConfig';
 
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageRole',
@@ -251,7 +243,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .get(`${baseURL}/role`, header)
+        .get(`${RAC.BASE_URL}/role`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -281,7 +273,7 @@ export default {
         role: this.data.role,
       };
       await axios
-        .post(`${baseURL}/role`, data, header)
+        .post(`${RAC.BASE_URL}/role`, data, RAC.HEADER)
         .then(async (res) => {
           if (res.data.status) {
             berhasil = true;
@@ -308,7 +300,7 @@ export default {
       let berhasil = false;
 
       await axios
-        .delete(`${baseURL}/role/${id}`, header)
+        .delete(`${RAC.BASE_URL}/role/${id}`, RAC.HEADER)
         .then(async (res) => {
           if (res.data.status) {
             berhasil = true;
@@ -338,7 +330,7 @@ export default {
       e.preventDefault();
       let berhasil = false;
       await axios
-        .put(`${baseURL}/role`, this.data, header)
+        .put(`${RAC.BASE_URL}/role`, this.data, RAC.HEADER)
         .then(async (res) => {
           if (res.data.status) {
             berhasil = true;

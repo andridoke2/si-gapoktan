@@ -553,20 +553,12 @@
 /** Libarry */
 import axios from 'axios';
 import $ from 'jquery';
+import RAC from '@/config/RestAPIConfig';
 
 /** Component */
 import Sidebar from '@/components/Sidebar.vue';
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
-
-/** API Configuration */
-const baseURL = '/api/hamparan';
-const TOKEN = localStorage.getItem('token');
-const header = {
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-};
 
 export default {
   name: 'PageOfKebun',
@@ -605,7 +597,7 @@ export default {
     async loadKebun() {
       let berhasil = false;
       await axios
-        .get(`${baseURL}/kebun`, header)
+        .get(`${RAC.BASE_URL}/kebun`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             berhasil = true;
@@ -635,7 +627,7 @@ export default {
       };
 
       await axios
-        .post(`${baseURL}/kebun`, payload, header)
+        .post(`${RAC.BASE_URL}/kebun`, payload, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.alert.icon = 'success';
@@ -677,7 +669,7 @@ export default {
       const payload = this.payload;
 
       await axios
-        .put(`${baseURL}/kebun`, payload, header)
+        .put(`${RAC.BASE_URL}/kebun`, payload, RAC.HEADER)
         .then((res) => {
           berhasil = true;
           if (res.data.status) {
@@ -717,7 +709,7 @@ export default {
 
     async getPemilik(kd_anggota) {
       await axios
-        .get(`${baseURL}/anggota/${kd_anggota}`, header)
+        .get(`${RAC.BASE_URL}/anggota/${kd_anggota}`, RAC.HEADER)
         .then((res) => {
           if (res.data.status) {
             this.pemilik = res.data.payload;
@@ -731,7 +723,7 @@ export default {
     async deleteKebun(kd_kebun) {
       let berhasil = false;
       await axios
-        .delete(`${baseURL}/kebun/${kd_kebun}`, header)
+        .delete(`${RAC.BASE_URL}/kebun/${kd_kebun}`, RAC.HEADER)
         .then((res) => {
           console.log(res);
           berhasil = true;

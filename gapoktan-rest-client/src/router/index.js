@@ -13,7 +13,11 @@ import SubMenu from '@/views/pages/SubMenu.vue';
 import Kebun from '@/views/pages/Kebun.vue';
 import Mobil from '@/views/pages/Mobil.vue';
 import Hasil from '@/views/pages/Hasil.vue';
+import Pajak from '@/views/pages/Pajak.vue';
+import Pengurus from '@/views/pages/Pengurus.vue';
 import Harga from '@/views/pages/Harga.vue';
+import Hamparan from '@/views/pages/Hamparan.vue';
+import JadwalHamparan from '@/views/pages/JadwalHamparan.vue';
 import Penghasilan from '@/views/pages/Penghasilan.vue';
 import KebunMobil from '@/views/pages/KebunMobilAnggota.vue';
 
@@ -157,6 +161,28 @@ const routes = [
   },
 
   /**
+   * router for PAJAK page
+   */
+  {
+    path: '/pajak',
+    component: Pajak,
+    meta: {
+      title: 'Pajak',
+    },
+  },
+
+  /**
+   * router for PENGURUS page
+   */
+  {
+    path: '/pengurus',
+    component: Pengurus,
+    meta: {
+      title: 'Pengurus',
+    },
+  },
+
+  /**
    * router for HARGA page
    */
   {
@@ -164,6 +190,28 @@ const routes = [
     component: Harga,
     meta: {
       title: 'Harga',
+    },
+  },
+
+  /**
+   * router for HAMPARAN page
+   */
+  {
+    path: '/hamparan',
+    component: Hamparan,
+    meta: {
+      title: 'Hamparan',
+    },
+  },
+
+  /**
+   * router for JADWAL HAMPARAN page
+   */
+  {
+    path: '/jadwal',
+    component: JadwalHamparan,
+    meta: {
+      title: 'Jadwal Hamparan',
     },
   },
 
